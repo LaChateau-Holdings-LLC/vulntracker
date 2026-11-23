@@ -4,6 +4,7 @@ This application is a manual vulnerability and mitigation register. It uses
 Python 3.12, SQLite, and browser-native HTML, CSS, and JavaScript.
 
 - `app.py` serves the interface and JSON API and owns schema and validation.
+- `tracker_auth.py` handles OIDC provider configuration, token validation, and sessions.
 - `static/` contains the browser interface.
 - `Dockerfile` and `compose.yaml` define the self-hosted service.
 - `DECISIONS.md` records design choices. `ROADMAP.md` records planned work.
@@ -20,8 +21,9 @@ temporary database for smoke checks.
 Validate source and deployment configuration with:
 
 ```sh
-python3 -m py_compile app.py
+python3 -m py_compile app.py tracker_auth.py
 node --check static/app.js
+node --check static/login.js
 docker compose config --quiet
 ```
 

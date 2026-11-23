@@ -2,7 +2,20 @@ services:
   tracker:
     build: .
     ports:
-      - "127.0.0.1:8780:8080"
+      - "${TRACKER_BIND_IP:-127.0.0.1}:8780:8080"
+    environment:
+      TRACKER_AUTH_MODE: "${TRACKER_AUTH_MODE:-off}"
+      OIDC_ENTRA_TENANT_ID: "${OIDC_ENTRA_TENANT_ID:-}"
+      OIDC_ISSUER_URL: "${OIDC_ISSUER_URL:-}"
+      OIDC_PROVIDER_NAME: "${OIDC_PROVIDER_NAME:-}"
+      OIDC_CLIENT_ID: "${OIDC_CLIENT_ID:-}"
+      OIDC_CLIENT_SECRET: "${OIDC_CLIENT_SECRET:-}"
+      OIDC_REDIRECT_URI: "${OIDC_REDIRECT_URI:-}"
+      OIDC_SCOPES: "${OIDC_SCOPES:-openid profile email}"
+      OIDC_ACCESS_CLAIM: "${OIDC_ACCESS_CLAIM:-}"
+      OIDC_ALLOWED_VALUE: "${OIDC_ALLOWED_VALUE:-}"
+      OIDC_ADMIN_VALUE: "${OIDC_ADMIN_VALUE:-}"
+      OIDC_TOKEN_AUTH_METHOD: "${OIDC_TOKEN_AUTH_METHOD:-}"
     volumes:
       - tracker-data:/data
     restart: unless-stopped

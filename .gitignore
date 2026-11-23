@@ -6,3 +6,5 @@
 *.sqlite3-*
 *.db
 *.db-*
+
+!/.env.example
