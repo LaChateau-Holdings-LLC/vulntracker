@@ -4,10 +4,11 @@ A manual tracker with a reusable product list and persistent SQLite storage.
 
 ## Run locally
 
-Run `python3 app.py` or `docker compose up --build -d`, then open
-[the tracker](http://localhost:8080). The Python command stores records in
-`data/tracker.sqlite3`. Docker Compose stores records in the `tracker-data`
-named volume.
+Run `docker compose up --build -d`, then open [the Docker tracker](http://localhost:8780).
+Docker Compose stores records in the `tracker-data` named volume.
+
+For development, run `python3 app.py` and open [the Python server](http://localhost:8080).
+The Python command stores records in `data/tracker.sqlite3`.
 
 The app binds to localhost by default and has no built-in authentication.
 Keep that binding for local use, or put the service behind an authenticated

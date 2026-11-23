@@ -2,7 +2,7 @@ services:
   tracker:
     build: .
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8780:8080"
     volumes:
       - tracker-data:/data
     restart: unless-stopped
