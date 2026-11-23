@@ -31,18 +31,15 @@ The screenshots use fictional advisories and sample inventory.
 
 ## Deploy with Docker Compose
 
-The published image runs on `linux/amd64`. Install Docker Engine and the Docker
-Compose plugin. The GHCR package is private. Sign in to GHCR with a GitHub
-account that has package access and a classic personal access token with
-`read:packages` before pulling.
+Install Docker Engine and the Docker Compose plugin. The source repository
+is public, so you can clone it and build locally without a GitHub account
+or a registry login.
 
 ```sh
 git clone https://github.com/LaChateau-Holdings-LLC/vulntracker.git
 cd vulntracker
 cp .env.example .env
-docker login ghcr.io -u YOUR_GITHUB_USERNAME
-docker compose pull
-docker compose up -d
+docker compose -f compose.yaml -f compose.build.yaml up --build -d
 ```
 
 Open [http://localhost:8780](http://localhost:8780). SQLite data is stored
@@ -54,14 +51,21 @@ For a shared deployment, use an HTTPS reverse proxy and enable required OIDC
 after testing sign-in. Review the [security guidance](SECURITY.md) before
 making the service available to users.
 
-To build from source, including on a different architecture, use the
-[build override](compose.build.yaml):
+Use both Compose files for later changes to a source-built deployment.
+
+### Optional prebuilt image
+
+The `linux/amd64` image is available from a private GHCR package. If you
+have package access, use a GitHub classic personal access token with
+`read:packages` as the Docker login password. Run these commands from a
+checkout with `.env` already in place.
 
 ```sh
-docker compose -f compose.yaml -f compose.build.yaml up --build -d
+docker login ghcr.io -u YOUR_GITHUB_USERNAME
+docker compose pull
+docker compose up -d
 ```
 
-Use the same pair of files for later changes to a source-built deployment.
 For local development, run `python3 app.py` with Python 3.12 and open
 [http://localhost:8080](http://localhost:8080). This stores data in
 `data/tracker.sqlite3`. To develop with OIDC, install `requirements.txt`
