@@ -1,0 +1,5 @@
+services:
+  tracker:
+    image: vulntracker-local:dev
+    build: .
+    pull_policy: never

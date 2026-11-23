@@ -6,7 +6,7 @@ Python 3.12, SQLite, and browser-native HTML, CSS, and JavaScript.
 - `app.py` serves the interface and JSON API and owns schema and validation.
 - `tracker_auth.py` handles OIDC provider configuration, token validation, and sessions.
 - `static/` contains the browser interface.
-- `Dockerfile` and `compose.yaml` define the self-hosted service.
+- `compose.yaml` pulls the release image. `Dockerfile` and `compose.build.yaml` support local builds.
 - `DECISIONS.md` records design choices. `ROADMAP.md` records planned work.
 
 Keep schema changes compatible with existing databases. Use a migration when

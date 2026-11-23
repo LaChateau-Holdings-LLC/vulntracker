@@ -1,0 +1,57 @@
+name: Publish container image
+
+on:
+  push:
+    tags: ["v[0-9]*"]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing Git release tag to package
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+
+    steps:
+      - name: Validate release tag
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Use a release tag such as v0.1.0."
+            exit 1
+          fi
+
+      - name: Check out the tagged source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+          persist-credentials: false
+
+      - name: Build and validate the image
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}:$RELEASE_TAG"
+          docker build --platform linux/amd64 --tag "$image" \
+            --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.revision=$(git rev-parse HEAD)" \
+            --label "org.opencontainers.image.version=$RELEASE_TAG" \
+            --label "org.opencontainers.image.licenses=MIT" \
+            .
+          docker run --rm --network none "$image" python -c 'import app; import jwt; app.initialize()'
+
+      - name: Publish and verify the registry image
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}:$RELEASE_TAG"
+          printf '%s' "$REGISTRY_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          docker push "$image"
+          docker image rm "$image"
+          docker pull --platform linux/amd64 "$image"
+          docker run --rm --network none "$image" python -c 'import app; import jwt; app.initialize()'
+          printf 'Published `%s` for `linux/amd64`.\n' "$image" >> "$GITHUB_STEP_SUMMARY"

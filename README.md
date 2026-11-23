@@ -31,13 +31,18 @@ The screenshots use fictional advisories and sample inventory.
 
 ## Deploy with Docker Compose
 
-Requires Docker Engine and the Docker Compose plugin.
+The published image runs on `linux/amd64`. Install Docker Engine and the Docker
+Compose plugin. The GHCR package is private. Sign in to GHCR with a GitHub
+account that has package access and a classic personal access token with
+`read:packages` before pulling.
 
 ```sh
 git clone https://github.com/LaChateau-Holdings-LLC/vulntracker.git
 cd vulntracker
 cp .env.example .env
-docker compose up --build -d
+docker login ghcr.io -u YOUR_GITHUB_USERNAME
+docker compose pull
+docker compose up -d
 ```
 
 Open [http://localhost:8780](http://localhost:8780). SQLite data is stored
@@ -49,6 +54,14 @@ For a shared deployment, use an HTTPS reverse proxy and enable required OIDC
 after testing sign-in. Review the [security guidance](SECURITY.md) before
 making the service available to users.
 
+To build from source, including on a different architecture, use the
+[build override](compose.build.yaml):
+
+```sh
+docker compose -f compose.yaml -f compose.build.yaml up --build -d
+```
+
+Use the same pair of files for later changes to a source-built deployment.
 For local development, run `python3 app.py` with Python 3.12 and open
 [http://localhost:8080](http://localhost:8080). This stores data in
 `data/tracker.sqlite3`. To develop with OIDC, install `requirements.txt`
@@ -69,8 +82,9 @@ applies to the vulnerability as a whole.
 ## Operations
 
 Use `docker compose ps` to check service status and
-`docker compose logs tracker` to view application logs. Run
-`docker compose up --build -d` after updating the source. A regular
+`docker compose logs tracker` to view application logs. To upgrade a
+registry deployment, set `TRACKER_IMAGE` to the desired version tag in
+`.env`, run `docker compose pull`, then `docker compose up -d`. A regular
 `docker compose down` preserves the named data volume. The `-v` flag
 removes that volume and its records.
 

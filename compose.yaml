@@ -1,6 +1,6 @@
 services:
   tracker:
-    build: .
+    image: "${TRACKER_IMAGE:-ghcr.io/lachateau-holdings-llc/vulntracker:v0.1.0}"
     ports:
       - "${TRACKER_BIND_IP:-127.0.0.1}:8780:8080"
     environment:
