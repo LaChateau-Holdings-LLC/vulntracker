@@ -31,41 +31,42 @@ The screenshots use fictional advisories and sample inventory.
 
 ## Deploy with Docker Compose
 
-Install Docker Engine and the Docker Compose plugin. The source repository
-is public, so you can clone it and build locally without a GitHub account
-or a registry login.
+Install Docker Engine and the Docker Compose plugin. The public
+`linux/amd64` image can be pulled without a GitHub account or registry login.
 
 ```sh
 git clone https://github.com/LaChateau-Holdings-LLC/vulntracker.git
 cd vulntracker
 cp .env.example .env
-docker compose -f compose.yaml -f compose.build.yaml up --build -d
+docker compose pull
+docker compose up -d
 ```
 
-Open [http://localhost:8780](http://localhost:8780). SQLite data is stored
-in the `tracker-data` named volume. For direct access on a trusted LAN, set
-`TRACKER_BIND_IP` in `.env` to the host’s LAN address and recreate the
-container with `docker compose up -d`.
+Open [http://localhost:8780](http://localhost:8780) on the Docker host.
+SQLite data is stored in the `tracker-data` named volume.
+
+### Access from another machine
+
+In `.env`, set `TRACKER_BIND_IP` to the Docker host's LAN address to bind
+to that interface, or set `TRACKER_BIND_IP=0.0.0.0` to listen on all host
+IPv4 interfaces. Compose reads this setting from `.env` automatically.
+Run `docker compose up -d` and browse to `http://<docker-host>:8780`.
+Use the Docker host's actual address in the browser.
 
 For a shared deployment, use an HTTPS reverse proxy and enable required OIDC
 after testing sign-in. Review the [security guidance](SECURITY.md) before
 making the service available to users.
 
-Use both Compose files for later changes to a source-built deployment.
+### Build from source
 
-### Optional prebuilt image
-
-The `linux/amd64` image is available from a private GHCR package. If you
-have package access, use a GitHub classic personal access token with
-`read:packages` as the Docker login password. Run these commands from a
-checkout with `.env` already in place.
+To build locally, including on another supported architecture, use the
+[source-build override](compose.build.yaml):
 
 ```sh
-docker login ghcr.io -u YOUR_GITHUB_USERNAME
-docker compose pull
-docker compose up -d
+docker compose -f compose.yaml -f compose.build.yaml up --build -d
 ```
 
+Use both Compose files for later changes to a source-built deployment.
 For local development, run `python3 app.py` with Python 3.12 and open
 [http://localhost:8080](http://localhost:8080). This stores data in
 `data/tracker.sqlite3`. To develop with OIDC, install `requirements.txt`
