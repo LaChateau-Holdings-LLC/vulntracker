@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vulnerability Tracker</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="masthead"><div class="frame brand">Security workspace</div></header>
+  <main class="frame">
+    <div class="heading">
+      <div><h1>Vulnerability Tracker</h1><p>Track disclosed vulnerabilities and their mitigation.</p></div>
+      <div class="actions"><button id="add-product" class="secondary">Add product</button><button id="add-record">+ Add vulnerability</button></div>
+    </div>
+    <div class="summary" aria-label="Vulnerability totals">
+      <div><span>Total vulnerabilities</span><strong id="total">0</strong></div>
+      <div><span>Open</span><strong id="open">0</strong></div>
+      <div><span>Mitigated</span><strong id="mitigated">0</strong></div>
+    </div>
+    <section class="panel" aria-labelledby="records-title">
+      <div class="toolbar">
+        <h2 id="records-title">Vulnerabilities</h2>
+        <div class="filters">
+          <input id="search" type="search" aria-label="Search vulnerabilities" placeholder="Search vulnerabilities">
+          <select id="status-filter" aria-label="Filter by status"><option value="">All statuses</option><option value="open">Open</option><option value="mitigated">Mitigated</option></select>
+          <select id="product-filter" aria-label="Filter by product"><option value="">All products</option></select>
+        </div>
+      </div>
+      <p class="feedback" id="page-feedback" role="status"></p>
+      <div class="table-wrap" id="table-wrap" hidden>
+        <table>
+          <thead><tr><th>Vulnerability</th><th>Affected products</th><th>Disclosed</th><th>Status</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+          <tbody id="records"></tbody>
+        </table>
+      </div>
+      <div id="empty" class="empty" hidden></div>
+    </section>
+  </main>
+
+  <dialog id="record-dialog" aria-labelledby="record-title">
+    <form id="record-form">
+      <h2 id="record-title">Add vulnerability</h2>
+      <label>Title<input name="title" required maxlength="200"></label>
+      <div class="columns">
+        <label>CVE <span>optional</span><input name="cve" placeholder="CVE-2025-1234" maxlength="32"></label>
+        <label>Vendor vulnerability ID <span>optional</span><input name="vendor" maxlength="200"></label>
+      </div>
+      <label>Disclosure date<input name="disclosed" type="date" required></label>
+      <fieldset><legend>Affected products</legend><div id="product-options" class="product-options"></div><button type="button" id="inline-product" class="secondary">+ Add product</button></fieldset>
+      <label>Notes<textarea name="notes" rows="3" maxlength="12000"></textarea></label>
+      <label>Reference links<textarea name="links" rows="2" maxlength="8000" placeholder="One URL per line"></textarea></label>
+      <label class="checkbox"><input name="mitigated" type="checkbox"> Mitigated</label>
+      <div id="mitigation-fields" hidden>
+        <label>Mitigation date<input name="mitigation_date" type="date"></label>
+        <label>How was it mitigated?<textarea name="mitigation_details" rows="3" maxlength="12000"></textarea></label>
+      </div>
+      <p class="feedback" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="secondary cancel">Cancel</button><button type="submit">Save vulnerability</button></div>
+    </form>
+  </dialog>
+  <dialog id="product-dialog" aria-labelledby="product-title">
+    <form id="product-form">
+      <h2 id="product-title">Add product</h2>
+      <label>Product name<input name="name" required maxlength="120"></label>
+      <p class="feedback" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="secondary cancel">Cancel</button><button type="submit">Save product</button></div>
+    </form>
+  </dialog>
+  <dialog id="detail-dialog" aria-labelledby="detail-title">
+    <div id="details"></div>
+    <div class="dialog-actions"><button class="secondary cancel">Close</button><button id="edit-record">Edit vulnerability</button></div>
+  </dialog>
+</body>
+</html>
